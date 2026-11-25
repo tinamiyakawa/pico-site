@@ -1,0 +1,26 @@
+---
+import Base from '../layouts/Base.astro';
+---
+
+<Base title="Spring Menu — Pico" description="The spring menu at Pico, Oakland.">
+  <section class="placeholder">
+    <h1 class="display">Spring Menu</h1>
+    <p>Coming soon.</p>
+  </section>
+</Base>
+
+<style>
+  .placeholder {
+    padding: clamp(4rem, 10vw, 8rem) var(--gutter);
+    text-align: center;
+  }
+  h1 {
+    margin: 0 0 0.5rem;
+    font-size: clamp(2.5rem, 6vw, 4.5rem);
+    text-transform: uppercase;
+  }
+  p {
+    margin: 0;
+    font-size: 1.25rem;
+  }
+</style>

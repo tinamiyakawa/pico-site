@@ -1,0 +1,112 @@
+---
+const year = 2027;
+---
+
+<footer class="site-footer">
+  <div class="signup">
+    <h2 class="display">Keep in touch for updates &amp; news</h2>
+
+    <!--
+      Uses Netlify Forms: submissions show up in the Netlify dashboard with no
+      backend needed. On another host, point `action` at Mailchimp, Buttondown,
+      Formspree, etc. instead.
+    -->
+    <form name="newsletter" method="POST" data-netlify="true" netlify-honeypot="company" class="email-form">
+      <input type="hidden" name="form-name" value="newsletter" />
+      <p class="visually-hidden">
+        <label>Leave this empty: <input name="company" tabindex="-1" autocomplete="off" /></label>
+      </p>
+
+      <label for="email" class="visually-hidden">Email address</label>
+      <input
+        id="email"
+        type="email"
+        name="email"
+        placeholder="Email Address"
+        autocomplete="email"
+        required
+      />
+      <button type="submit" aria-label="Subscribe">
+        <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+          <path d="M3 12h17M14 5.5l6.5 6.5-6.5 6.5" />
+        </svg>
+      </button>
+    </form>
+  </div>
+
+  <p class="copyright">&copy; {year} Pico. All rights reserved.</p>
+</footer>
+
+<style>
+  .site-footer {
+    background: var(--maroon);
+    color: var(--cream);
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    flex-wrap: wrap;
+    gap: 1.5rem 2rem;
+    padding: clamp(2rem, 4vw, 2.75rem) var(--gutter) clamp(2rem, 4vw, 2.75rem);
+  }
+
+  h2 {
+    margin: 0 0 1.75rem;
+    font-size: clamp(1.4rem, 2.2vw, 1.75rem);
+    text-transform: uppercase;
+    letter-spacing: 0.01em;
+  }
+
+  .email-form {
+    display: flex;
+    align-items: center;
+    width: min(26rem, 100%);
+    border: 1.5px solid currentColor;
+    border-radius: 999px;
+    padding: 0.2rem 0.35rem 0.2rem 1.1rem;
+  }
+
+  .email-form:focus-within {
+    outline: 2px solid currentColor;
+    outline-offset: 3px;
+  }
+
+  input[type='email'] {
+    flex: 1;
+    min-width: 0;
+    background: transparent;
+    border: 0;
+    color: inherit;
+    font: inherit;
+    font-size: 1.15rem;
+    padding: 0.7rem 0;
+  }
+
+  input[type='email']::placeholder {
+    color: inherit;
+    opacity: 1;
+  }
+
+  input[type='email']:focus {
+    outline: none;
+  }
+
+  button {
+    display: grid;
+    place-items: center;
+    background: none;
+    border: 0;
+    color: inherit;
+    padding: 0.5rem;
+    cursor: pointer;
+    transition: transform 0.15s ease;
+  }
+
+  button:hover {
+    transform: translateX(3px);
+  }
+
+  .copyright {
+    margin: 0;
+    font-size: 1.15rem;
+  }
+</style>
