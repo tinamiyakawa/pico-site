@@ -27,8 +27,8 @@ const photos = [
     position: absolute;
     top: 0;
     left: 0;
-    width: 20vw;
-    max-width: 340px;
+    width: 17vw;
+    max-width: 289px;
     height: auto;
     opacity: 0;
     transition: opacity 0.8s ease;
@@ -41,14 +41,14 @@ const photos = [
 
   @media (max-width: 600px) {
     .bouncer {
-      width: 38vw;
+      width: 32.3vw;
     }
   }
 </style>
 
 <script>
   // Speed in pixels per second. Lower = slower, calmer drift.
-  const SPEED = 45;
+  const SPEED = 52;
 
   const imgs = Array.from(document.querySelectorAll<HTMLImageElement>('.bouncer'));
   const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
