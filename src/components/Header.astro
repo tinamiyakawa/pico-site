@@ -12,7 +12,7 @@ const path = Astro.url.pathname.replace(/\/$/, '') || '/';
   </a>
 
   <a href="/about" class="nav-link right" aria-current={path === '/about' ? 'page' : undefined}>
-    <span class="dot" aria-hidden="true"></span>About
+    About
   </a>
 </header>
 
@@ -42,27 +42,28 @@ const path = Astro.url.pathname.replace(/\/$/, '') || '/';
 
   .right {
     justify-self: end;
-    display: inline-flex;
-    align-items: center;
-    gap: 0.55em;
   }
 
-  .dot {
-    width: 0.6em;
-    height: 0.6em;
-    border-radius: 50%;
-    background: currentColor;
+  .nav-link:hover {
+    text-decoration: none;
   }
 
-  @media (max-width: 560px) {
+
+  /* Mobile: just the tagline (nav links hidden for now, per mobile design) */
+  @media (max-width: 600px) {
     .site-header {
-      grid-template-columns: 1fr 1fr;
-      row-gap: 1.25rem;
+      display: block;
+      padding: 14.1vw 4vw 0;
+      font-size: 8.7vw;
+    }
+
+    .nav-link {
+      display: none;
     }
 
     .tagline {
-      grid-column: 1 / -1;
-      grid-row: 2;
+      display: block;
+      line-height: 0.95;
     }
   }
 </style>

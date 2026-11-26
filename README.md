@@ -48,4 +48,3 @@ a different backend (e.g. Buttondown, Mailchimp, Formspree) — change the form'
 - Footer body text uses Barlow as a stand-in; swap `--font-body` in
   `global.css` if you license regular TT Commons.
 - Logo is from the original vector (pico-logo.pdf).
-- Set `site` in `astro.config.mjs` to the real domain.

@@ -33,9 +33,28 @@ import Logo from '../components/Logo.astro';
     line-height: 0;
   }
 
+  @media (max-width: 600px) {
+    .hero {
+      padding: 9.4vw 3.85vw 12vw;
+    }
+
+    .address {
+      font-size: 5.95vw;
+      margin-bottom: 13vw;
+    }
+  }
+
   .wordmark :global(.logo) {
     display: block;
     width: 100%;
     height: auto;
+    aspect-ratio: 1572 / 1097;
+  }
+
+  /* Mobile design stretches the wordmark taller */
+  @media (max-width: 600px) {
+    .wordmark :global(.logo) {
+      aspect-ratio: 643 / 521;
+    }
   }
 </style>
