@@ -7,21 +7,28 @@ const year = 2027;
     <h2 class="display">Keep in touch for updates &amp; news</h2>
 
     <!--
-      Uses Netlify Forms: submissions show up in the Netlify dashboard with no
-      backend needed. On another host, point `action` at Mailchimp, Buttondown,
-      Formspree, etc. instead.
+      Mailchimp signup. Uses Mailchimp's JSON endpoint so visitors stay on the
+      page and see the thank-you message below. Without JavaScript the form
+      still works by opening Mailchimp's own confirmation page.
     -->
-    <form name="newsletter" method="POST" data-netlify="true" netlify-honeypot="company" class="email-form">
-      <input type="hidden" name="form-name" value="newsletter" />
-      <p class="visually-hidden">
-        <label>Leave this empty: <input name="company" tabindex="-1" autocomplete="off" /></label>
-      </p>
+    <form
+      action="https://linktr.us21.list-manage.com/subscribe/post?u=7244b5026781839856dfa5d4f&amp;id=02a6891739&amp;f_id=000a98e6f0"
+      method="post"
+      target="_blank"
+      class="email-form"
+      id="signup-form"
+      novalidate
+    >
+      <!-- Mailchimp spam trap: real people never fill this in -->
+      <div class="visually-hidden" aria-hidden="true">
+        <input type="text" name="b_7244b5026781839856dfa5d4f_02a6891739" tabindex="-1" value="" autocomplete="off" />
+      </div>
 
       <label for="email" class="visually-hidden">Email address</label>
       <input
         id="email"
         type="email"
-        name="email"
+        name="EMAIL"
         placeholder="Email Address"
         autocomplete="email"
         required
@@ -32,10 +39,84 @@ const year = 2027;
         </svg>
       </button>
     </form>
+
+    <p class="form-message" id="signup-message" role="status" aria-live="polite"></p>
   </div>
 
   <p class="copyright">&copy; {year} Pico. All rights reserved.</p>
 </footer>
+
+<script>
+  const form = document.getElementById('signup-form') as HTMLFormElement | null;
+  const message = document.getElementById('signup-message') as HTMLParagraphElement | null;
+
+  // Messages shown under the field. Edit the wording here.
+  const TEXT = {
+    success: "Thank you! We'll be in touch.",
+    confirm: 'Almost there! Check your inbox to confirm.',
+    already: "You're already on the list. Thank you!",
+    invalid: 'Please enter a valid email address.',
+    error: 'Something went wrong. Please try again.',
+  };
+
+  function show(text: string, state: 'ok' | 'error') {
+    if (!message) return;
+    message.textContent = text;
+    message.dataset.state = state;
+  }
+
+  form?.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const email = (form.querySelector('input[name="EMAIL"]') as HTMLInputElement).value.trim();
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      show(TEXT.invalid, 'error');
+      return;
+    }
+
+    // Mailchimp only allows cross-site signups via JSONP (a <script> callback).
+    const callback = 'mcSignup' + Date.now();
+    const params = new URLSearchParams(new FormData(form) as any);
+    params.set('c', callback);
+    const url = form.action.replace('/post?', '/post-json?') + '&' + params.toString();
+
+    const script = document.createElement('script');
+    const cleanup = () => {
+      delete (window as any)[callback];
+      script.remove();
+    };
+    const timer = setTimeout(() => {
+      cleanup();
+      show(TEXT.error, 'error');
+    }, 10000);
+
+    (window as any)[callback] = (res: { result: string; msg: string }) => {
+      clearTimeout(timer);
+      cleanup();
+      const msg = (res.msg || '').toLowerCase();
+      if (res.result === 'success') {
+        show(msg.includes('confirm') ? TEXT.confirm : TEXT.success, 'ok');
+        form.classList.add('done');
+        form.reset();
+      } else if (msg.includes('already subscribed')) {
+        show(TEXT.already, 'ok');
+        form.classList.add('done');
+      } else if (msg.includes('invalid') || msg.includes('valid email')) {
+        show(TEXT.invalid, 'error');
+      } else {
+        show(TEXT.error, 'error');
+      }
+    };
+
+    script.src = url;
+    script.onerror = () => {
+      clearTimeout(timer);
+      cleanup();
+      show(TEXT.error, 'error');
+    };
+    show('', 'ok');
+    document.body.appendChild(script);
+  });
+</script>
 
 <style>
   .site-footer {
@@ -110,6 +191,28 @@ const year = 2027;
     font-size: 1.15rem;
   }
 
+  /* Thank-you / error message under the field */
+  .form-message {
+    margin: 0.9rem 0 0;
+    min-height: 1.4em;
+    font-size: 1.1rem;
+  }
+
+  .form-message:empty {
+    margin: 0;
+    min-height: 0;
+  }
+
+  /* After a successful signup, hide the field and leave just the message */
+  .email-form.done {
+    display: none;
+  }
+
+  .email-form.done + .form-message {
+    margin-top: 0;
+    font-size: 1.15rem;
+  }
+
   /* Mobile: full-width heading + email field, no copyright line */
   @media (max-width: 600px) {
     .site-footer {
@@ -140,6 +243,11 @@ const year = 2027;
 
     .copyright {
       display: none;
+    }
+
+    .form-message,
+    .email-form.done + .form-message {
+      font-size: max(16px, 3.9vw);
     }
   }
 </style>
