@@ -1,0 +1,164 @@
+---
+// Photos that drift slowly across the screen and bounce off the edges
+// (like a ping pong ball / DVD screensaver). They float on top of the page,
+// but clicks pass through them. Add or swap photos in this list.
+const photos = [
+  { src: '/images/photo-1.webp', width: 800, height: 543 },
+  { src: '/images/photo-2.webp', width: 800, height: 852 },
+];
+---
+
+<div class="bouncers" aria-hidden="true">
+  {photos.map((p) => (
+    <img class="bouncer" src={p.src} width={p.width} height={p.height} alt="" decoding="async" />
+  ))}
+</div>
+
+<style>
+  .bouncers {
+    position: fixed;
+    inset: 0;
+    z-index: 50;
+    pointer-events: none;
+    overflow: hidden;
+  }
+
+  .bouncer {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 20vw;
+    max-width: 340px;
+    height: auto;
+    opacity: 0;
+    transition: opacity 0.8s ease;
+    will-change: transform;
+  }
+
+  .bouncer.ready {
+    opacity: 1;
+  }
+
+  @media (max-width: 600px) {
+    .bouncer {
+      width: 38vw;
+    }
+  }
+</style>
+
+<script>
+  // Speed in pixels per second. Lower = slower, calmer drift.
+  const SPEED = 45;
+
+  const imgs = Array.from(document.querySelectorAll<HTMLImageElement>('.bouncer'));
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  type Mover = { el: HTMLImageElement; x: number; y: number; vx: number; vy: number; w: number; h: number };
+  const movers: Mover[] = [];
+
+  const view = () => ({ W: document.documentElement.clientWidth, H: window.innerHeight });
+
+  function measure(m: Mover) {
+    m.w = m.el.offsetWidth;
+    m.h = m.el.offsetHeight;
+  }
+
+  function place(m: Mover) {
+    m.el.style.transform = `translate3d(${m.x}px, ${m.y}px, 0)`;
+  }
+
+  imgs.forEach((el, i) => {
+    const start = () => {
+      const { W, H } = view();
+      // Each photo starts in a different area and heads off at its own angle.
+      const angle = (i % 2 === 0 ? 0.6 : 2.3) + Math.random() * 0.5;
+      const m: Mover = {
+        el,
+        x: 0,
+        y: 0,
+        vx: Math.cos(angle) * SPEED,
+        vy: Math.sin(angle) * SPEED,
+        w: 0,
+        h: 0,
+      };
+      measure(m);
+      m.x = Math.random() * Math.max(0, W - m.w);
+      m.y = (i % 2 === 0 ? 0.15 : 0.55) * Math.max(0, H - m.h);
+      place(m);
+      el.classList.add('ready');
+      movers.push(m);
+    };
+    if (el.complete) start();
+    else el.addEventListener('load', start, { once: true });
+  });
+
+  window.addEventListener('resize', () => {
+    const { W, H } = view();
+    movers.forEach((m) => {
+      measure(m);
+      m.x = Math.min(m.x, Math.max(0, W - m.w));
+      m.y = Math.min(m.y, Math.max(0, H - m.h));
+      place(m);
+    });
+  });
+
+  // Photos bounce off each other: when two overlap, push them apart along the
+  // side where they touched and send each one away from the other.
+  function collide() {
+    for (let i = 0; i < movers.length; i++) {
+      for (let j = i + 1; j < movers.length; j++) {
+        const a = movers[i];
+        const b = movers[j];
+        const overlapX = Math.min(a.x + a.w, b.x + b.w) - Math.max(a.x, b.x);
+        const overlapY = Math.min(a.y + a.h, b.y + b.h) - Math.max(a.y, b.y);
+        if (overlapX <= 0 || overlapY <= 0) continue;
+
+        if (overlapX < overlapY) {
+          // Side-to-side hit
+          const aLeft = a.x + a.w / 2 < b.x + b.w / 2;
+          a.x += (aLeft ? -1 : 1) * overlapX / 2;
+          b.x += (aLeft ? 1 : -1) * overlapX / 2;
+          a.vx = (aLeft ? -1 : 1) * Math.abs(a.vx);
+          b.vx = (aLeft ? 1 : -1) * Math.abs(b.vx);
+        } else {
+          // Top-to-bottom hit
+          const aAbove = a.y + a.h / 2 < b.y + b.h / 2;
+          a.y += (aAbove ? -1 : 1) * overlapY / 2;
+          b.y += (aAbove ? 1 : -1) * overlapY / 2;
+          a.vy = (aAbove ? -1 : 1) * Math.abs(a.vy);
+          b.vy = (aAbove ? 1 : -1) * Math.abs(b.vy);
+        }
+      }
+    }
+    // Keep everyone inside the screen after being pushed apart.
+    const { W, H } = view();
+    for (const m of movers) {
+      m.x = Math.min(Math.max(0, m.x), Math.max(0, W - m.w));
+      m.y = Math.min(Math.max(0, m.y), Math.max(0, H - m.h));
+    }
+  }
+
+  if (!reduceMotion) {
+    let last = performance.now();
+    const tick = (now: number) => {
+      // Cap the step so a hidden tab doesn't make photos jump when you come back.
+      const dt = Math.min((now - last) / 1000, 0.05);
+      last = now;
+      const { W, H } = view();
+      for (const m of movers) {
+        m.x += m.vx * dt;
+        m.y += m.vy * dt;
+        const maxX = Math.max(0, W - m.w);
+        const maxY = Math.max(0, H - m.h);
+        if (m.x <= 0) { m.x = 0; m.vx = Math.abs(m.vx); }
+        else if (m.x >= maxX) { m.x = maxX; m.vx = -Math.abs(m.vx); }
+        if (m.y <= 0) { m.y = 0; m.vy = Math.abs(m.vy); }
+        else if (m.y >= maxY) { m.y = maxY; m.vy = -Math.abs(m.vy); }
+      }
+      collide();
+      for (const m of movers) place(m);
+      requestAnimationFrame(tick);
+    };
+    requestAnimationFrame(tick);
+  }
+</script>
