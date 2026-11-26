@@ -1,6 +1,5 @@
 ---
 import '@fontsource/barlow-condensed/700.css';
-import '@fontsource/barlow/400.css';
 import '../styles/global.css';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
@@ -30,6 +29,13 @@ const {
     <link
       rel="preload"
       href="/fonts/tt-commons-condensed-bold.woff2"
+      as="font"
+      type="font/woff2"
+      crossorigin
+    />
+    <link
+      rel="preload"
+      href="/fonts/tt-commons-compact-medium.woff2"
       as="font"
       type="font/woff2"
       crossorigin

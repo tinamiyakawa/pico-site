@@ -6,15 +6,22 @@
   font-display: swap;
 }
 
+@font-face {
+  font-family: 'TT Commons Compact';
+  src: url('/fonts/tt-commons-compact-medium.woff2') format('woff2');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
 :root {
   --cream: #f4f2e5;
   --maroon: #6b1c2a;
 
   /* Headline face: TT Commons Pro Condensed Bold, Barlow Condensed as fallback */
   --font-display: 'TT Commons Condensed', 'Barlow Condensed', 'Arial Narrow', sans-serif;
-  /* Body face for small text (footer input, copyright).
-     Swap in regular TT Commons here if you license it. */
-  --font-body: 'Barlow', system-ui, sans-serif;
+  /* Body face: TT Commons Pro Compact Medium (email field, copyright, body copy) */
+  --font-body: 'TT Commons Compact', system-ui, sans-serif;
 
   --gutter: clamp(1.25rem, 3.5vw, 2.75rem);
 }
@@ -37,6 +44,7 @@ body {
   background: var(--cream);
   color: var(--maroon);
   font-family: var(--font-body);
+  font-weight: 500;
   -webkit-font-smoothing: antialiased;
 }
 

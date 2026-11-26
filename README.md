@@ -42,9 +42,8 @@ a different backend (e.g. Buttondown, Mailchimp, Formspree) — change the form'
 
 ## Before launch
 
-- **Font license:** `public/fonts/` currently holds the *trial* TT Commons Pro.
-  Replace it with the licensed web font (convert to woff2, same filename) and
-  make sure the license covers web embedding.
-- Footer body text uses Barlow as a stand-in; swap `--font-body` in
-  `global.css` if you license regular TT Commons.
+- **Font license:** `public/fonts/` currently holds the *trial* TT Commons Pro
+  (Condensed Bold for headings, Compact Medium for body text). Replace both with
+  the licensed web fonts (convert to woff2, same filenames) and make sure the
+  license covers web embedding.
 - Logo is from the original vector (pico-logo.pdf).
