@@ -1,27 +1,14 @@
----
-const path = Astro.url.pathname.replace(/\/$/, '') || '/';
----
-
 <header class="site-header display">
-  <a href="/menu" class="nav-link left" aria-current={path === '/menu' ? 'page' : undefined}>
-    Spring Menu
-  </a>
-
+  <!-- Nav links (Spring Menu, About) removed for now; add a nav here later. -->
   <a href="/" class="tagline">
     A Bar &amp; Restaurant<br />Coming Soon
-  </a>
-
-  <a href="/about" class="nav-link right" aria-current={path === '/about' ? 'page' : undefined}>
-    About
   </a>
 </header>
 
 <style>
   .site-header {
-    display: grid;
-    grid-template-columns: 1fr auto 1fr;
-    align-items: start;
-    gap: 1rem;
+    display: flex;
+    justify-content: center;
     padding: clamp(1.5rem, 3vw, 2.25rem) var(--gutter) 0;
     font-size: clamp(1.35rem, 2.6vw, 2rem);
   }
@@ -36,29 +23,11 @@ const path = Astro.url.pathname.replace(/\/$/, '') || '/';
     text-decoration: none;
   }
 
-  .left {
-    justify-self: start;
-  }
-
-  .right {
-    justify-self: end;
-  }
-
-  .nav-link:hover {
-    text-decoration: none;
-  }
-
-
-  /* Mobile: just the tagline (nav links hidden for now, per mobile design) */
+  /* Mobile: larger tagline, per mobile design */
   @media (max-width: 600px) {
     .site-header {
-      display: block;
       padding: 14.1vw 4vw 0;
       font-size: 8.7vw;
-    }
-
-    .nav-link {
-      display: none;
     }
 
     .tagline {
